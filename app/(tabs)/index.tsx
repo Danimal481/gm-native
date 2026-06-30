@@ -33,11 +33,6 @@ export default function HomeScreen() {
           style={styles.logo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="subtitle" style={styles.instructions}>
-          Choose how many points the assignment is being scored out of.
-        </ThemedText>
-      </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
         <NumberStepper
