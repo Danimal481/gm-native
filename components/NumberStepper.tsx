@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -39,7 +39,29 @@ export function NumberStepper({
           <Text style={[styles.buttonText, { color: colors.tint }]}>−</Text>
         </Pressable>
 
-        <Text style={[styles.value, { color: colors.text }]}>{value}</Text>
+        {/*<Text style={[styles.value, { color: colors.text }]}>{value}</Text> */}
+
+        <TextInput
+          value={String(value ?? '')}
+          onChangeText={(text) => {
+  const digitsOnly = text.replace(/\D/g, '');
+
+  if (digitsOnly === '') {
+    onChange(min);
+    return;
+  }
+
+  const nextValue = Number(digitsOnly);
+
+  const limitedValue =
+    max !== undefined ? Math.min(max, nextValue) : nextValue;
+
+  onChange(Math.max(min, limitedValue));
+}}
+          keyboardType="number-pad"
+          selectTextOnFocus={true}
+          style={styles.valueInput}
+        ></TextInput>
 
         <Pressable style={[styles.button, { borderColor: colors.border }]} onPress={increase}>
           <Text style={[styles.buttonText, { color: colors.tint }]}>+</Text>
@@ -84,4 +106,13 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: '700',
   },
+
+  valueInput: {
+    minWidth: 80,
+    textAlign: 'center',
+    fontSize: 38,
+    fontWeight: '700',
+    paddingVertical: 0,
+    color: Colors.light.text,
+},
 });
