@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { getLetterGrade } from "@/constants/grading";
 import { Colors } from "@/constants/theme";
 import { ScrollView, StyleSheet } from "react-native";
 
@@ -37,9 +38,10 @@ return (
         </ThemedText>
               
     <ThemedView style={styles.chartHeader}>
-        <ThemedText style={styles.chartHeaderText}>Earned</ThemedText>
-        <ThemedText style={styles.chartHeaderText}>Lost</ThemedText>
+        <ThemedText style={styles.chartHeaderText}>Correct</ThemedText>
+        <ThemedText style={styles.chartHeaderText}>Incorrect</ThemedText>
         <ThemedText style={styles.chartHeaderText}>Score</ThemedText>
+        <ThemedText style={styles.chartHeaderText}>Grade</ThemedText>
     </ThemedView>
     
               <ScrollView
@@ -71,6 +73,12 @@ return (
                     row.earned === correctNumber && styles.highlightedCell,
                   ]}>
                     {row.percentage}%
+                  </ThemedText>
+                  <ThemedText style={[
+                    styles.chartCell,
+                    row.earned === correctNumber && styles.highlightedCell,
+                  ]}>
+                    {getLetterGrade(row.percentage)}
                   </ThemedText>
                 </ThemedView>
                 ))}
