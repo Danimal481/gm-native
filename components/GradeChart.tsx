@@ -28,7 +28,15 @@ for (let earned = totalNumber; earned >= 0; earned--) {
     earned,
     lost: totalNumber - earned,
     percentage: rowPercentage,
+    letter: getLetterGrade(rowPercentage),
   });
+}
+function getLetterGradeColor(letter: string) {
+  if (letter === 'A') return Colors.light.gradeA;
+  if (letter === 'B') return Colors.light.gradeB;
+  if (letter === 'C') return Colors.light.gradeC;
+  if (letter === 'D') return Colors.light.gradeD;
+  return Colors.light.gradeF;
 }
 
 return (
@@ -74,11 +82,13 @@ return (
                   ]}>
                     {row.percentage}%
                   </ThemedText>
-                  <ThemedText style={[
-                    styles.chartCell,
-                    row.earned === correctNumber && styles.highlightedCell,
-                  ]}>
-                    {getLetterGrade(row.percentage)}
+                  <ThemedText
+                    style={[
+                      styles.chartCell,
+                      row.earned === correctNumber && styles.highlightedCell,
+                      { color: getLetterGradeColor(row.letter) },
+                    ]}>
+                      {row.letter}
                   </ThemedText>
                 </ThemedView>
                 ))}

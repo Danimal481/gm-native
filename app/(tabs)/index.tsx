@@ -7,6 +7,7 @@ import { NumberStepper } from '@/components/NumberStepper';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { getLetterGrade } from '@/constants/grading';
 import { Colors } from '@/constants/theme';
 
 export default function HomeScreen() {
@@ -51,7 +52,7 @@ export default function HomeScreen() {
         />
 
         <ThemedText type="defaultSemiBold">
-          {correct} correct out of {totalQuestions} is a score of {percentage}%
+          {correct} / {totalQuestions} = {percentage}% ({getLetterGrade(percentage)})
         </ThemedText>
       </ThemedView>
 

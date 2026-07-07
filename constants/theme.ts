@@ -12,6 +12,12 @@ const gradeMasterNavy = '#101C2A';
 const gradeMasterGold = '#E4B64A';
 const gradeMasterText = '#F4F7FB';
 
+const gradeA = '#4ADE80';
+const gradeB = '#A3E635';
+const gradeC = '#FACC15';
+const gradeD = '#FB923C';
+const gradeF = '#F87171';
+
 export const Colors = {
   light: {
     highlight: tintColorLight,
@@ -23,6 +29,11 @@ export const Colors = {
     icon: '#AEB9C9',
     tabIconDefault: '#AEB9C9',
     tabIconSelected: gradeMasterGold,
+    gradeA: gradeA,
+    gradeB: gradeB,
+    gradeC: gradeC,
+    gradeD: gradeD,
+    gradeF: gradeF,
   },
   dark: {
     highlight: tintColorLight,
@@ -34,6 +45,11 @@ export const Colors = {
     icon: '#AEB9C9',
     tabIconDefault: '#AEB9C9',
     tabIconSelected: gradeMasterGold,
+    gradeA,
+    gradeB,
+    gradeC,
+    gradeD,
+    gradeF,
   },
 };
 
