@@ -7,10 +7,13 @@ import { NumberStepper } from '@/components/NumberStepper';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { getLetterGrade } from '@/constants/grading';
+import { getLetterGrade, getLetterGradeColor } from '@/constants/grading';
 import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
   const [totalQuestions, setTotalQuestions] = useState(20);
   const [correct, setCorrect] = useState(15);
 
@@ -21,7 +24,8 @@ export default function HomeScreen() {
 
   const percentage =
     totalQuestions > 0 ? Math.round((correct / totalQuestions) * 100) : 0;
-
+  
+  const letterGrade = getLetterGrade(percentage);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{
@@ -51,8 +55,12 @@ export default function HomeScreen() {
           max={totalQuestions}
         />
 
-        <ThemedText type="defaultSemiBold">
-          {correct} / {totalQuestions} = {percentage}% ({getLetterGrade(percentage)})
+        <ThemedText type="defaultSemiBold" style={styles.summaryText}>
+          {correct} / {totalQuestions} = {percentage}% (
+            <ThemedText style={{ color: getLetterGradeColor(letterGrade, colors) }}>
+              {letterGrade}
+            </ThemedText>
+            )
         </ThemedText>
       </ThemedView>
 
@@ -62,9 +70,10 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  summaryText: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    textAlign: 'center',
     gap: 8,
   },
 
