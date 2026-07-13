@@ -56,11 +56,12 @@ export default function HomeScreen() {
         />
 
         <ThemedText type="defaultSemiBold" style={styles.summaryText}>
-          {correct} / {totalQuestions} = {percentage}% (
+          {correct} / {totalQuestions} = {percentage}
+          {"\n"}
             <ThemedText style={{ color: getLetterGradeColor(letterGrade, colors) }}>
-              {letterGrade}
+             {letterGrade}
             </ThemedText>
-            )
+            
         </ThemedText>
       </ThemedView>
 

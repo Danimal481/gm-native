@@ -82,14 +82,16 @@ return (
                   ]}>
                     {row.percentage}%
                   </ThemedText>
-                  <ThemedText
+                  <ThemedView style={styles.letterGradeCell}>
+                    <ThemedText
                     style={[
-                      styles.chartCell,
+                      styles.gradeBadge,
                       row.earned === correctNumber && styles.highlightedCell,
-                      { color: getLetterGradeColor(row.letter) },
+                      { backgroundColor: getLetterGradeColor(row.letter) },
                     ]}>
                       {row.letter}
                   </ThemedText>
+                  </ThemedView>
                 </ThemedView>
                 ))}
             
@@ -131,6 +133,7 @@ return (
 
     chartRow: {
         flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: Colors.light.card,
         borderRadius: 8,
         paddingVertical: 12,
@@ -146,14 +149,30 @@ return (
     },
 
     highlightedCell: {
-        color: Colors.light.tint,
+        color: Colors.light.text,
         fontWeight: '700',
     },
 
+    letterGradeCell: {
+        flex: 1,
+        textAlign: 'center',
+        backgroundColor: Colors.light.card,
+    },
+    
     chartCell: {
         flex: 1,
-        color: Colors.light.text,
-        textAlign: 'center',
+        textAlign: 'center',                
+    },
+
+    gradeBadge: {
+      minWidth: 46,
+      paddingVertical: 2,
+      paddingHorizontal: 14,
+      borderRadius: 999,
+      textAlign: 'center',
+      fontWeight: '800',
+      overflow: 'hidden',
+      color: Colors.light.card,
     },
 
     chartScroll: {
