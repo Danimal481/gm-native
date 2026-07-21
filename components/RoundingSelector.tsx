@@ -29,7 +29,7 @@ export function RoundingSelector({
   return (
     <ThemedView style={styles.selectorCard}>
       <ThemedText type="subtitle" style={styles.selectorTitle}>
-        Rounding Mode
+        Rounding
       </ThemedText>
 
       <View style={styles.optionsContainer}>
