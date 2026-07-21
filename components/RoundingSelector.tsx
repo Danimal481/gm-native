@@ -34,7 +34,7 @@ export function RoundingSelector({
 
       <View style={styles.optionsContainer}>
        {options.map((option, index) => {
-  const isLastOption = index === options.length - 1;
+  const isFirstOption = index === 0;
   const isSelected = value === option.value;
 
   return (
@@ -44,7 +44,7 @@ export function RoundingSelector({
       style={[
         styles.optionButton,
         isSelected && styles.selectedOption,
-        isLastOption && styles.lastOption,
+        isFirstOption && styles.firstOption,
       ]}
     >
       <View
@@ -105,8 +105,9 @@ optionButton: {
   backgroundColor: Colors.light.background,
 },
 
-lastOption: {
-  marginLeft: "25.75%",
+firstOption: {
+  width: "100%",
+  marginBottom: 4,
 },
 
   selectedOption: {
