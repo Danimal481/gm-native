@@ -1,28 +1,40 @@
+import { GradeBadge } from "@/components/GradeBadge";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { getLetterGrade } from "@/constants/grading";
+import { getLetterGrade, roundPercentage, type LetterGrade, type RoundingMode } from "@/constants/grading";
 import { Colors } from "@/constants/theme";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+
+type GradeRow = {
+  earned: number;
+  lost: number;
+  percentage: number;
+  letter: LetterGrade;
+};
 
 type GradeChartProps = {
   totalQuestions: number;
   correct: number;
+  roundingMode: RoundingMode;
 };
 
 export function GradeChart({ 
     totalQuestions, 
     correct,
+    roundingMode,
  }: GradeChartProps) {
     const totalNumber = Number(totalQuestions) || 0;
     const correctNumber = Number(correct) || 0;
 
-    const gradeRows = [];
+    const gradeRows: GradeRow[] = [];
 
 for (let earned = totalNumber; earned >= 0; earned--) {
-  const rowPercentage =
+  const rawPercentage =
     totalNumber > 0
-      ? Math.round((earned / totalNumber) * 100)
+      ? (earned / totalNumber) * 100
       : 0;
+
+  const rowPercentage = roundPercentage(rawPercentage, roundingMode);
 
   gradeRows.push({
     earned,
@@ -30,13 +42,6 @@ for (let earned = totalNumber; earned >= 0; earned--) {
     percentage: rowPercentage,
     letter: getLetterGrade(rowPercentage),
   });
-}
-function getLetterGradeColor(letter: string) {
-  if (letter === 'A') return Colors.light.gradeA;
-  if (letter === 'B') return Colors.light.gradeB;
-  if (letter === 'C') return Colors.light.gradeC;
-  if (letter === 'D') return Colors.light.gradeD;
-  return Colors.light.gradeF;
 }
 
 return (
@@ -74,7 +79,7 @@ return (
                     styles.chartCell,
                     row.earned === correctNumber && styles.highlightedCell,
                   ]}>
-                    {row.lost} lost
+                    {row.lost} missed
                   </ThemedText>
                   <ThemedText style={[
                     styles.chartCell,
@@ -82,16 +87,9 @@ return (
                   ]}>
                     {row.percentage}%
                   </ThemedText>
-                  <ThemedView style={styles.letterGradeCell}>
-                    <ThemedText
-                    style={[
-                      styles.gradeBadge,
-                      row.earned === correctNumber && styles.highlightedCell,
-                      { backgroundColor: getLetterGradeColor(row.letter) },
-                    ]}>
-                      {row.letter}
-                  </ThemedText>
-                  </ThemedView>
+                  <View style={styles.letterGradeCell}>
+                    <GradeBadge grade={row.letter} />
+                  </View>
                 </ThemedView>
                 ))}
             
@@ -150,30 +148,19 @@ return (
 
     highlightedCell: {
         color: Colors.light.text,
-        fontWeight: '700',
+        fontWeight: '700',    
     },
 
     letterGradeCell: {
         flex: 1,
-        textAlign: 'center',
-        backgroundColor: Colors.light.card,
+        alignItems: 'center',
+        justifyContent: 'center',       
     },
     
     chartCell: {
         flex: 1,
         textAlign: 'center',                
-    },
-
-    gradeBadge: {
-      minWidth: 46,
-      paddingVertical: 2,
-      paddingHorizontal: 14,
-      borderRadius: 999,
-      textAlign: 'center',
-      fontWeight: '800',
-      overflow: 'hidden',
-      color: Colors.light.card,
-    },
+    },    
 
     chartScroll: {
         maxHeight: 320,

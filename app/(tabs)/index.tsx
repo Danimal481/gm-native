@@ -1,15 +1,16 @@
-import { Image } from 'expo-image';
-import { useState } from 'react';
-import { StyleSheet } from 'react-native';
-
+import { GradeBadge } from '@/components/GradeBadge';
 import { GradeChart } from '@/components/GradeChart';
 import { NumberStepper } from '@/components/NumberStepper';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { RoundingSelector } from '@/components/RoundingSelector';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { getLetterGrade, getLetterGradeColor } from '@/constants/grading';
+import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Image } from 'expo-image';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -22,10 +23,21 @@ export default function HomeScreen() {
     setCorrect((currentCorrect) => Math.min(currentCorrect, newTotal));
   }
 
-  const percentage =
-    totalQuestions > 0 ? Math.round((correct / totalQuestions) * 100) : 0;
+  const rawPercentage =
+  totalQuestions > 0
+    ? (correct / totalQuestions) * 100
+    : 0;
   
+  const [roundingMode, setRoundingMode] =
+  useState<RoundingMode>("nearest");
+
+  const percentage = roundPercentage(
+  rawPercentage,
+  roundingMode
+);
+
   const letterGrade = getLetterGrade(percentage);
+ 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{
@@ -54,23 +66,28 @@ export default function HomeScreen() {
           min={0}
           max={totalQuestions}
         />
-
+        <RoundingSelector value={roundingMode} onChange={setRoundingMode} />
+      
+      <ThemedView style={styles.summaryContainer}>
         <ThemedText type="defaultSemiBold" style={styles.summaryText}>
-          {correct} / {totalQuestions} = {percentage}
-          {"\n"}
-            <ThemedText style={{ color: getLetterGradeColor(letterGrade, colors) }}>
-             {letterGrade}
-            </ThemedText>
+          {correct} / {totalQuestions} = {percentage}%          
+          </ThemedText>
+            <GradeBadge grade={letterGrade} />
             
-        </ThemedText>
+        </ThemedView>
       </ThemedView>
 
-      <GradeChart totalQuestions={totalQuestions} correct={correct} />
+      <GradeChart totalQuestions={totalQuestions} correct={correct} roundingMode={roundingMode} />
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  summaryContainer: {
+    alignItems: "center",
+    gap: 6,
+},
+
   summaryText: {
     flexDirection: 'column',
     alignItems: 'flex-start',
