@@ -1,8 +1,9 @@
 import { GradeBadge } from "@/components/GradeBadge";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { getLetterGrade, roundPercentage, type LetterGrade, type RoundingMode } from "@/constants/grading";
+import { getLetterGrade, roundPercentage, type LetterGrade } from "@/constants/grading";
 import { Colors } from "@/constants/theme";
+import { useSettings } from "@/contexts/SettingsContext";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 type GradeRow = {
@@ -14,18 +15,16 @@ type GradeRow = {
 
 type GradeChartProps = {
   totalQuestions: number;
-  correct: number;
-  roundingMode: RoundingMode;
+  correct: number;  
 };
 
 export function GradeChart({ 
     totalQuestions, 
-    correct,
-    roundingMode,
+    correct,    
  }: GradeChartProps) {
     const totalNumber = Number(totalQuestions) || 0;
     const correctNumber = Number(correct) || 0;
-
+    const { roundingMode } = useSettings();
     const gradeRows: GradeRow[] = [];
 
 for (let earned = totalNumber; earned >= 0; earned--) {

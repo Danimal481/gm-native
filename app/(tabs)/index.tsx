@@ -2,7 +2,6 @@ import { GradeBadge } from '@/components/GradeBadge';
 import { GradeChart } from '@/components/GradeChart';
 import { NumberStepper } from '@/components/NumberStepper';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { RoundingSelector } from '@/components/RoundingSelector';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
@@ -11,6 +10,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
+
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -66,7 +66,7 @@ export default function HomeScreen() {
           min={0}
           max={totalQuestions}
         />
-        <RoundingSelector value={roundingMode} onChange={setRoundingMode} />
+        {/* <RoundingSelector value={roundingMode} onChange={setRoundingMode} /> */}
       
       <ThemedView style={styles.summaryContainer}>
         <ThemedText type="defaultSemiBold" style={styles.summaryText}>
@@ -77,7 +77,7 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
 
-      <GradeChart totalQuestions={totalQuestions} correct={correct} roundingMode={roundingMode} />
+      <GradeChart totalQuestions={totalQuestions} correct={correct}  />
     </ParallaxScrollView>
   );
 }

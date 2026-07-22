@@ -3,14 +3,12 @@ import { RoundingSelector } from '@/components/RoundingSelector';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import type { RoundingMode } from '@/constants/grading';
 import { Colors, Fonts } from '@/constants/theme';
-import { useState } from 'react';
+import { useSettings } from '@/contexts/SettingsContext';
 import { StyleSheet } from 'react-native';
 
 export default function SettingsScreen() {
-  const [roundingMode, setRoundingMode] = 
-  useState<RoundingMode>("nearest");
+  const { roundingMode, setRoundingMode } = useSettings();
  
   return (
     <ParallaxScrollView
