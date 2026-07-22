@@ -1,9 +1,11 @@
 import type { RoundingMode } from "@/constants/grading";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     createContext,
     type ReactNode,
     useContext,
-    useState
+    useEffect,
+    useState,
 } from "react";
 
 type SettingsContextValue = {
@@ -22,9 +24,29 @@ type SettingsProviderProps = {
 export function SettingsProvider({
     children,
 }: SettingsProviderProps) {
+    const [settingsLoaded, setSettingsLoaded] = useState(false);
     const [roundingMode, setRoundingMode] =
         useState<RoundingMode>("nearest");
-    
+        useEffect(() => {
+            async function loadSettings() {
+                const saveRoundingMode =
+                    await AsyncStorage.getItem("roundingMode");
+
+                if (saveRoundingMode) {
+                    setRoundingMode(saveRoundingMode as RoundingMode);
+                }
+                setSettingsLoaded(true);
+            }
+            loadSettings();                
+        }, []);
+
+        useEffect(() => {
+            if (!settingsLoaded) {
+                return;
+            }
+                AsyncStorage.setItem("roundingMode", roundingMode);
+            }, [roundingMode, settingsLoaded]);
+
     return (
         <SettingsContext.Provider
             value={{

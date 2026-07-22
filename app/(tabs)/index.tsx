@@ -6,17 +6,31 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
 import { Colors } from '@/constants/theme';
+import { useSettings } from '@/contexts/SettingsContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
+
+const roundingLabels: Record<RoundingMode, string> = {
+  nearest: 'Rounding to Nearest',
+  up: 'Rounding Up',
+  down: 'Rounding Down',
+  oneDecimal: 'Rounding to One Decimal',
+  twoDecimals: 'Rounding to Two Decimals',
+};
 
 export default function HomeScreen() {
+  const { roundingMode } = useSettings();
+  
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme];
+  
   const [totalQuestions, setTotalQuestions] = useState(20);
   const [correct, setCorrect] = useState(15);
+  
 
   function handleTotalQuestionsChange(newTotal: number) {
     setTotalQuestions(newTotal);
@@ -28,9 +42,6 @@ export default function HomeScreen() {
     ? (correct / totalQuestions) * 100
     : 0;
   
-  const [roundingMode, setRoundingMode] =
-  useState<RoundingMode>("nearest");
-
   const percentage = roundPercentage(
   rawPercentage,
   roundingMode
@@ -49,8 +60,8 @@ export default function HomeScreen() {
           source={require('@/assets/images/grademaster-logo.png')}
           style={styles.logo}
         />
-      }>
-
+      }
+    >
       <ThemedView style={styles.stepContainer}>
         <NumberStepper
           label="Total Points"
@@ -66,18 +77,40 @@ export default function HomeScreen() {
           min={0}
           max={totalQuestions}
         />
-        {/* <RoundingSelector value={roundingMode} onChange={setRoundingMode} /> */}
-      
-      <ThemedView style={styles.summaryContainer}>
-        <ThemedText type="defaultSemiBold" style={styles.summaryText}>
-          {correct} / {totalQuestions} = {percentage}%          
-          </ThemedText>
-            <GradeBadge grade={letterGrade} />
-            
-        </ThemedView>
       </ThemedView>
 
-      <GradeChart totalQuestions={totalQuestions} correct={correct}  />
+      <ThemedView style={styles.summaryContainer}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={styles.summaryText}
+        >
+          {correct} / {totalQuestions} = {percentage}%
+        </ThemedText>
+
+        <GradeBadge grade={letterGrade} />
+
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/settings",
+              params: { highlight: "rounding" },
+            })
+          }
+          style={({ pressed }) => [
+            styles.roundingPill,
+            pressed && styles.roundingPillPressed,
+          ]}
+        >
+          <Text style={styles.roundingPillText}>
+            ⚙ {roundingLabels[roundingMode]} -&gt; 
+          </Text>
+        </Pressable>
+      </ThemedView>
+
+      <GradeChart
+        totalQuestions={totalQuestions}
+        correct={correct}
+      />
     </ParallaxScrollView>
   );
 }
@@ -110,5 +143,27 @@ const styles = StyleSheet.create({
     top: 95,
     alignSelf: 'center',
     position: 'absolute',
+  },
+
+  roundingPill: {
+    alignSelf: 'center',
+    marginTop: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    backgroundColor: "#16263A",
+    borderColor: "#405574",
+  },
+
+  roundingPillPressed: {
+    opacity: 0.65,
+    transform: [{ scale: 0.95 }],
+  },
+
+  roundingPillText: {
+    color: "#E8EDF5",
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

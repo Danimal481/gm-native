@@ -5,11 +5,43 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Fonts } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
-import { StyleSheet } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet } from 'react-native';
 
 export default function SettingsScreen() {
   const { roundingMode, setRoundingMode } = useSettings();
- 
+  const { highlight } = useLocalSearchParams<{
+    highlight?: string;
+  }>();
+  const [highlightRounding, setHighlightRounding] = useState(false);
+  const highlightOpacity = useRef(new Animated.Value(0)).current;
+  
+  useEffect(() => {
+  if (highlight !== "rounding") {
+    return;
+  }
+
+  highlightOpacity.setValue(0);
+
+  Animated.sequence([
+    Animated.timing(highlightOpacity, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: false,
+    }),
+    Animated.delay(800),
+    Animated.timing(highlightOpacity, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: false,
+    }),
+  ]).start(() => {
+    router.setParams({ highlight: undefined });
+  });
+}, [highlight, highlightOpacity]);
+
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{
@@ -24,6 +56,7 @@ export default function SettingsScreen() {
           style={styles.headerImage}
         />
       }>
+      
       <ThemedView style={styles.titleContainer}>
         <ThemedText
           type="title"
@@ -31,12 +64,22 @@ export default function SettingsScreen() {
           Settings
         </ThemedText>
       </ThemedView>
-
+    <Animated.View
+      style={[
+        styles.roundingCard,
+        {
+          borderColor: highlightOpacity.interpolate({
+            inputRange: [0, 1],
+            outputRange: ["transparent", Colors.light.tint],
+          }),
+        },
+      ]}
+      >
       <RoundingSelector
         value={roundingMode}
         onChange={setRoundingMode}
       />
-
+    </Animated.View>
     </ParallaxScrollView>
   );
 }
@@ -57,5 +100,14 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: Fonts.rounded,
   },
+
+  roundingCard: {
+    borderRadius: 16,
+    borderWidth: 2,   
+  },
+
+  roundingCardHighlighted: {
+    borderColor: Colors.light.tint,
+  }
 
 });
