@@ -1,3 +1,4 @@
+import { DEFAULT_TOTAL_POINTS } from "@/constants/defaults";
 import type { RoundingMode } from "@/constants/grading";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -11,6 +12,8 @@ import {
 type SettingsContextValue = {
     roundingMode: RoundingMode;
     setRoundingMode: (mode: RoundingMode) => void;
+    defaultTotalPoints: number;
+    setDefaultTotalPoints: (points: number) => void;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(
@@ -24,16 +27,24 @@ type SettingsProviderProps = {
 export function SettingsProvider({
     children,
 }: SettingsProviderProps) {
+    const [defaultTotalPoints, setDefaultTotalPoints] = useState(DEFAULT_TOTAL_POINTS);
     const [settingsLoaded, setSettingsLoaded] = useState(false);
     const [roundingMode, setRoundingMode] =
         useState<RoundingMode>("nearest");
         useEffect(() => {
             async function loadSettings() {
-                const saveRoundingMode =
+                const savedRoundingMode =
                     await AsyncStorage.getItem("roundingMode");
+                
+                const savedDefaultTotalPoints =
+                    await AsyncStorage.getItem("defaultTotalPoints");
 
-                if (saveRoundingMode) {
-                    setRoundingMode(saveRoundingMode as RoundingMode);
+                if (savedRoundingMode) {
+                    setRoundingMode(savedRoundingMode as RoundingMode);
+                }
+                if (savedDefaultTotalPoints) {
+                    setDefaultTotalPoints(
+                        Number(savedDefaultTotalPoints));
                 }
                 setSettingsLoaded(true);
             }
@@ -47,11 +58,19 @@ export function SettingsProvider({
                 AsyncStorage.setItem("roundingMode", roundingMode);
             }, [roundingMode, settingsLoaded]);
 
+        useEffect(() => {
+            if (!settingsLoaded) {
+                return;
+            }
+                AsyncStorage.setItem("defaultTotalPoints", String(defaultTotalPoints));
+            }, [defaultTotalPoints, settingsLoaded]);            
     return (
         <SettingsContext.Provider
             value={{
                 roundingMode,
                 setRoundingMode,
+                defaultTotalPoints,
+                setDefaultTotalPoints,
             }}
         >
             {children}
