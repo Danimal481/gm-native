@@ -10,7 +10,7 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 
@@ -23,15 +23,26 @@ const roundingLabels: Record<RoundingMode, string> = {
 };
 
 export default function HomeScreen() {
-  const { roundingMode } = useSettings();
+   const { defaultTotalPoints,
+        roundingMode,
+        settingsLoaded,
+} = useSettings();
   
   const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-  
-  const [totalQuestions, setTotalQuestions] = useState(20);
-  const [correct, setCorrect] = useState(15);
-  
+   
+  const [totalQuestions, setTotalQuestions] = useState(defaultTotalPoints);
+  const [correct, setCorrect] = useState(defaultTotalPoints);
 
+  const calculatorInitialized = useRef(false);
+
+useEffect(() => {
+  if (settingsLoaded && !calculatorInitialized.current) {
+    setTotalQuestions(defaultTotalPoints);
+    setCorrect(defaultTotalPoints);
+    calculatorInitialized.current = true;
+  }
+}, [settingsLoaded, defaultTotalPoints]);
+  
   function handleTotalQuestionsChange(newTotal: number) {
     setTotalQuestions(newTotal);
     setCorrect((currentCorrect) => Math.min(currentCorrect, newTotal));

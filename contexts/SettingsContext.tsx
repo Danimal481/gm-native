@@ -14,6 +14,7 @@ type SettingsContextValue = {
     setRoundingMode: (mode: RoundingMode) => void;
     defaultTotalPoints: number;
     setDefaultTotalPoints: (points: number) => void;
+    settingsLoaded: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(
@@ -71,6 +72,7 @@ export function SettingsProvider({
                 setRoundingMode,
                 defaultTotalPoints,
                 setDefaultTotalPoints,
+                settingsLoaded,
             }}
         >
             {children}

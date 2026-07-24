@@ -1,3 +1,4 @@
+import { NumberStepper } from '@/components/NumberStepper';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { RoundingSelector } from '@/components/RoundingSelector';
 import { ThemedText } from '@/components/themed-text';
@@ -6,15 +7,15 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Fonts } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
 export default function SettingsScreen() {
   const { roundingMode, setRoundingMode } = useSettings();
+  const { defaultTotalPoints, setDefaultTotalPoints } = useSettings();
   const { highlight } = useLocalSearchParams<{
     highlight?: string;
   }>();
-  const [highlightRounding, setHighlightRounding] = useState(false);
   const highlightOpacity = useRef(new Animated.Value(0)).current;
   
   useEffect(() => {
@@ -40,7 +41,6 @@ export default function SettingsScreen() {
     router.setParams({ highlight: undefined });
   });
 }, [highlight, highlightOpacity]);
-
 
   return (
     <ParallaxScrollView
@@ -80,6 +80,13 @@ export default function SettingsScreen() {
         onChange={setRoundingMode}
       />
     </Animated.View>
+
+    <NumberStepper
+      label="Default Total Points"
+      value={defaultTotalPoints}
+      onChange={setDefaultTotalPoints}
+      min={1}
+    />
     </ParallaxScrollView>
   );
 }
