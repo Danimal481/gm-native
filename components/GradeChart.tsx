@@ -24,7 +24,7 @@ export function GradeChart({
  }: GradeChartProps) {
     const totalNumber = Number(totalQuestions) || 0;
     const correctNumber = Number(correct) || 0;
-    const { roundingMode } = useSettings();
+    const { roundingMode, gradeScale } = useSettings();
     const gradeRows: GradeRow[] = [];
 
 for (let earned = totalNumber; earned >= 0; earned--) {
@@ -39,7 +39,7 @@ for (let earned = totalNumber; earned >= 0; earned--) {
     earned,
     lost: totalNumber - earned,
     percentage: rowPercentage,
-    letter: getLetterGrade(rowPercentage),
+    letter: getLetterGrade(rowPercentage, gradeScale),
   });
 }
 

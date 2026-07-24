@@ -2,6 +2,13 @@ import { Colors } from "./theme";
 
 export type LetterGrade = "A" | "B" | "C" | "D" | "F";
 
+export type GradeScale ={
+  A: number;
+  B: number;
+  C: number;
+  D: number;
+};
+
 export type RoundingMode =
   | "nearest"
   | "up"
@@ -9,11 +16,14 @@ export type RoundingMode =
   | "oneDecimal"
   | "twoDecimals";
 
-export function getLetterGrade(roundPercentage: number): LetterGrade {
-  if (roundPercentage >= 90) return 'A';
-  if (roundPercentage >= 80) return 'B';
-  if (roundPercentage >= 70) return 'C';
-  if (roundPercentage >= 60) return 'D';
+export function getLetterGrade(
+  percentage: number, 
+  scale: GradeScale
+): LetterGrade {
+  if (percentage >= scale.A) return 'A';
+  if (percentage >= scale.B) return 'B';
+  if (percentage >= scale.C) return 'C';
+  if (percentage >= scale.D) return 'D';
   return 'F';
 }
 

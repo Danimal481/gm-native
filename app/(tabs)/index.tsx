@@ -7,7 +7,6 @@ import { ThemedView } from '@/components/themed-view';
 import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
 import { Colors } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -25,10 +24,9 @@ const roundingLabels: Record<RoundingMode, string> = {
 export default function HomeScreen() {
    const { defaultTotalPoints,
         roundingMode,
+        gradeScale,
         settingsLoaded,
 } = useSettings();
-  
-  const colorScheme = useColorScheme() ?? 'light';
    
   const [totalQuestions, setTotalQuestions] = useState(defaultTotalPoints);
   const [correct, setCorrect] = useState(defaultTotalPoints);
@@ -58,7 +56,7 @@ useEffect(() => {
   roundingMode
 );
 
-  const letterGrade = getLetterGrade(percentage);
+  const letterGrade = getLetterGrade(percentage, gradeScale);
  
   return (
     <ParallaxScrollView
