@@ -9,7 +9,7 @@ import { Colors, Fonts } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export default function SettingsScreen() {
   const { roundingMode, setRoundingMode } = useSettings();
@@ -45,7 +45,16 @@ export default function SettingsScreen() {
 }, [highlight, highlightOpacity]);
 
   return (
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={0}
+>
     <ParallaxScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{
+        paddingBottom: 16
+      }}
       headerBackgroundColor={{
         light: Colors.light.background,
         dark: Colors.dark.background,
@@ -57,7 +66,8 @@ export default function SettingsScreen() {
           name="gearshape.fill"
           style={styles.headerImage}
         />
-      }>
+      }
+     >
       
       <ThemedView style={styles.titleContainer}>
         <ThemedText
@@ -95,7 +105,8 @@ export default function SettingsScreen() {
     <GradeScaleRow letter="C" value={gradeScale.C} min={gradeScale.D + 1} max={gradeScale.B - 1} onChange={(value) => setGradeScale ({ ... gradeScale, C: value, })} />
     <GradeScaleRow letter="D" value={gradeScale.D} min={1} max={gradeScale.C - 1} onChange={(value) => setGradeScale ({ ... gradeScale, D: value, })} />
   </ThemedView>
-    </ParallaxScrollView>
+</ParallaxScrollView>
+</KeyboardAvoidingView>
   );
 }
 

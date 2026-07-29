@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 type GradeScaleRowProps = {
   letter: "A" | "B" | "C" | "D";
@@ -20,6 +20,14 @@ export function GradeScaleRow({
 }: GradeScaleRowProps) {
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputText, setInputText] = useState(String(value));
+    
+  useEffect (() => {
+    if (!isEditing) {
+        setInputText(String(value));
+    }
+  }, [value, isEditing]);
 
   function decrease() {
     onChange(Math.max(min, value - 1));
@@ -31,17 +39,27 @@ export function GradeScaleRow({
 
   function handleTextChange(text: string) {
     const digitsOnly = text.replace(/\D/g, "");
-
-    if (digitsOnly === "") {
-      onChange(min);
-      return;
-    }
-
+    setInputText(digitsOnly);
     const nextValue = Number(digitsOnly);
     const limitedValue = Math.min(max, Math.max(min, nextValue));
 
     onChange(limitedValue);
   }
+
+  function commitInput() {
+    if (inputText === "") {
+        setInputText(String(value));
+        return;
+  }
+
+  const enteredValue = Number(inputText);
+  const limitedValue = Math.min(max, Math.max(min, enteredValue));
+
+  setIsEditing(false);
+  onChange(limitedValue);
+  setInputText(String(limitedValue));
+}
+
 
   return (
     <View style={styles.row}>
@@ -50,7 +68,7 @@ export function GradeScaleRow({
       </Text>
 
       <Pressable
-        style={[styles.button, { borderColor: colors.border }]}
+        style={[styles.button, { backgroundColor: '#162338', borderColor: colors.border }]}
         onPress={decrease}
       >
         <Text style={[styles.buttonText, { color: colors.tint }]}>
@@ -59,21 +77,24 @@ export function GradeScaleRow({
       </Pressable>
 
       <TextInput
-        value={String(value)}
+        onFocus={() => setIsEditing(true)}
+        value={inputText}
         onChangeText={handleTextChange}
+        onBlur={commitInput}
+        onSubmitEditing={commitInput}
         keyboardType="number-pad"
         selectTextOnFocus
         style={[
-          styles.valueInput,
-          {
-            color: colors.text,
-            borderColor: colors.border,
-          },
+            styles.valueInput,
+            {
+                color: colors.text,
+                borderColor: colors.border,
+            },
         ]}
       />
 
       <Pressable
-        style={[styles.button, { borderColor: colors.border }]}
+        style={[styles.button, { backgroundColor: '#162338', borderColor: colors.border }]}
         onPress={increase}
       >
         <Text style={[styles.buttonText, { color: colors.tint }]}>
