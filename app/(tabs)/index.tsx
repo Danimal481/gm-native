@@ -12,7 +12,6 @@ import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-
 const roundingLabels: Record<RoundingMode, string> = {
   nearest: 'Rounding to Nearest',
   up: 'Rounding Up',
@@ -28,27 +27,27 @@ export default function HomeScreen() {
         settingsLoaded,
 } = useSettings();
    
-  const [totalQuestions, setTotalQuestions] = useState(defaultTotalPoints);
-  const [correct, setCorrect] = useState(defaultTotalPoints);
+  const [totalPoints, setTotalPoints] = useState(defaultTotalPoints);
+  const [pointsEarned, setPointsEarned] = useState(defaultTotalPoints);
 
   const calculatorInitialized = useRef(false);
 
 useEffect(() => {
   if (settingsLoaded && !calculatorInitialized.current) {
-    setTotalQuestions(defaultTotalPoints);
-    setCorrect(defaultTotalPoints);
+    setTotalPoints(defaultTotalPoints);
+    setPointsEarned(defaultTotalPoints);
     calculatorInitialized.current = true;
   }
 }, [settingsLoaded, defaultTotalPoints]);
   
-  function handleTotalQuestionsChange(newTotal: number) {
-    setTotalQuestions(newTotal);
-    setCorrect((currentCorrect) => Math.min(currentCorrect, newTotal));
+  function handleTotalPointsChange(newTotal: number) {
+    setTotalPoints(newTotal);
+    setPointsEarned((currentPointsEarned) => Math.min(currentPointsEarned, newTotal));
   }
 
   const rawPercentage =
-  totalQuestions > 0
-    ? (correct / totalQuestions) * 100
+  totalPoints > 0
+    ? (pointsEarned / totalPoints ) * 100
     : 0;
   
   const percentage = roundPercentage(
@@ -74,17 +73,17 @@ useEffect(() => {
       <ThemedView style={styles.stepContainer}>
         <NumberStepper
           label="Total Points"
-          value={totalQuestions}
-          onChange={handleTotalQuestionsChange}
+          value={totalPoints}
+          onChange={handleTotalPointsChange}
           min={1}
         />
 
         <NumberStepper
-          label="Correct"
-          value={correct}
-          onChange={setCorrect}
+          label="Points Earned"
+          value={pointsEarned}
+          onChange={setPointsEarned}
           min={0}
-          max={totalQuestions}
+          max={totalPoints}
         />
       </ThemedView>
 
@@ -93,7 +92,7 @@ useEffect(() => {
           type="defaultSemiBold"
           style={styles.summaryText}
         >
-          {correct} / {totalQuestions} = {percentage}%
+          {pointsEarned} / {totalPoints} = {percentage}%
         </ThemedText>
 
         <GradeBadge grade={letterGrade} />
@@ -117,8 +116,8 @@ useEffect(() => {
       </ThemedView>
 
       <GradeChart
-        totalQuestions={totalQuestions}
-        correct={correct}
+        totalPoints={totalPoints}
+        pointsEarned={pointsEarned}
       />
     </ParallaxScrollView>
   );

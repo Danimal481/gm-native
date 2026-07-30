@@ -4,7 +4,9 @@ import { ThemedView } from "@/components/themed-view";
 import { getLetterGrade, roundPercentage, type LetterGrade } from "@/constants/grading";
 import { Colors } from "@/constants/theme";
 import { useSettings } from "@/contexts/SettingsContext";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 type GradeRow = {
   earned: number;
@@ -14,16 +16,22 @@ type GradeRow = {
 };
 
 type GradeChartProps = {
-  totalQuestions: number;
-  correct: number;  
+  totalPoints: number;
+  pointsEarned: number;
+  expanded?: boolean;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;  
 };
 
 export function GradeChart({ 
-    totalQuestions, 
-    correct,    
+    totalPoints, 
+    pointsEarned,
+    expanded = false,
+    onMoveUp,
+    onMoveDown,    
  }: GradeChartProps) {
-    const totalNumber = Number(totalQuestions) || 0;
-    const correctNumber = Number(correct) || 0;
+    const totalNumber = Number(totalPoints) || 0;
+    const correctNumber = Number(pointsEarned) || 0;
     const { roundingMode, gradeScale } = useSettings();
     const gradeRows: GradeRow[] = [];
 
@@ -43,12 +51,120 @@ for (let earned = totalNumber; earned >= 0; earned--) {
   });
 }
 
+const scrollRef = useRef<ScrollView>(null);
+
+const [scrollHeight, setScrollHeight] = useState(0);
+const [rowHeight, setRowHeight] = useState(0);
+
+function centerSelectedRow(animated = true) {
+  if (!expanded || scrollHeight === 0 || rowHeight === 0) {
+    return;
+  }
+
+  // Rows run from totalPoints down to zero.
+  // For 21 total:
+  // 21/21 = index 0
+  // 20/21 = index 1
+  // 15/21 = index 6
+  const selectedIndex = totalNumber - correctNumber;
+
+  const rowTop = selectedIndex * rowHeight;
+  const rowCenter = rowTop + rowHeight / 2;
+
+  const targetOffset = Math.max(
+    0,
+    rowCenter - scrollHeight / 2
+  );
+
+  scrollRef.current?.scrollTo({
+    y: targetOffset,
+    animated,
+  });
+}
+
+useEffect(() => {
+  if (!expanded || rowHeight === 0 || scrollHeight === 0) {
+    return;
+  }
+
+  const frame = requestAnimationFrame(() => {
+    centerSelectedRow(true);
+  });
+
+  return () => cancelAnimationFrame(frame);
+}, [
+  correctNumber,
+  totalNumber,
+  rowHeight,
+  scrollHeight,
+  expanded,
+]);
+
 return (
-    <ThemedView style={styles.chartCard}>
-        <ThemedText type="subtitle" style={styles.chartTitle}>
-            Grade Chart
+  <ThemedView
+    style={[
+      styles.chartCard,
+      expanded && styles.expandedChartCard,
+    ]}
+  >
+    <ThemedView style={styles.titleRow}>
+  {!expanded ? (
+    <>
+      <ThemedText type="subtitle" style={styles.chartTitle}>
+        Grade Chart
+      </ThemedText>
+
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/expanded-chart",
+            params: {
+              totalPoints: String(totalNumber),
+              pointsEarned: String(correctNumber),
+            },
+          })
+        }
+        hitSlop={8}
+      >
+        <ThemedText style={styles.expandButtonText}>
+          Full Screen
         </ThemedText>
-              
+      </Pressable>
+    </>
+  ) : (
+    <ThemedView style={styles.expandedControls}>
+      <Pressable
+        onPress={onMoveDown}
+        disabled={correctNumber <= 0}
+        hitSlop={10}
+        style={[
+          styles.arrowButton,
+          correctNumber <= 0 && styles.disabledArrow,
+        ]}
+      >
+        <ThemedText style={styles.arrowText}>▼</ThemedText>
+      </Pressable>
+
+      <ThemedText style={styles.selectedScoreText}>
+        {correctNumber}/{totalNumber} selected
+      </ThemedText>
+
+      <Pressable
+        onPress={onMoveUp}
+        disabled={correctNumber >= totalNumber}
+        hitSlop={10}
+        style={[
+          styles.arrowButton,
+          correctNumber >= totalNumber && styles.disabledArrow,
+        ]}
+      >
+        <ThemedText style={styles.arrowText}>▲</ThemedText>
+      </Pressable>
+    </ThemedView>
+  )}
+</ThemedView>
+
+                      
     <ThemedView style={styles.chartHeader}>
         <ThemedText style={styles.chartHeaderText}>Correct</ThemedText>
         <ThemedText style={styles.chartHeaderText}>Incorrect</ThemedText>
@@ -57,12 +173,24 @@ return (
     </ThemedView>
     
               <ScrollView
-                style={styles.chartScroll}
-                nestedScrollEnabled={true}
+                ref={scrollRef}
+                style={[
+                  styles.chartScroll,
+                  expanded && styles.expandedChartScroll,
+                ]}
+                nestedScrollEnabled
+                onLayout={(event) => {
+                  setScrollHeight(event.nativeEvent.layout.height);
+                }}
               >
                 {gradeRows.map((row) => (
                   <ThemedView
                   key={row.earned}
+                  onLayout={(event) => {
+                    if (rowHeight === 0) {
+                      setRowHeight(event.nativeEvent.layout.height);
+                    }
+                  }}
                   style={[
                     styles.chartRow,
                     row.earned === correctNumber && styles.highlightedRow,
@@ -98,6 +226,39 @@ return (
  }
 
  const styles = StyleSheet.create({
+    expandedControls: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+
+    arrowButton: {
+      minWidth: 48,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 10,
+      backgroundColor: Colors.light.background,
+    },
+
+    arrowText: {
+      color: Colors.light.tint,
+      fontSize: 22,
+      fontWeight: "700",
+    },
+
+    disabledArrow: {
+      opacity: 0.3,
+    },
+
+    selectedScoreText: {
+      flex: 1,
+      textAlign: "center",
+      fontWeight: "700",
+      fontSize: 17,
+    },
+
     chartCard: {
         width: '100%',
         marginTop: 12,
@@ -108,9 +269,7 @@ return (
     },
     
     chartTitle: {
-        color: Colors.light.text,
-        padding: 12,
-        paddingBottom: 8,
+        color: Colors.light.text,        
     },
 
     chartHeader: {
@@ -164,4 +323,29 @@ return (
     chartScroll: {
         maxHeight: 320,
     },
+
+    expandedChartScroll: {
+      flex: 1,
+      maxHeight: undefined,
+    },
+
+    expandedChartCard: {
+      flex: 1,
+      marginTop: 0,
+    },
+
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 12,
+      paddingTop: 12,
+      paddingBottom: 8,
+    },    
+    
+    expandButtonText: {
+      color: Colors.light.tint,
+      fontWeight: "600",
+    },
+
  });

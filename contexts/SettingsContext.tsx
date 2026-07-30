@@ -20,6 +20,10 @@ type SettingsContextValue = {
     settingsLoaded: boolean;
     gradeScale: GradeScale;
     setGradeScale: (scale: GradeScale) => void;
+    totalPoints: string;
+    setTotalPoints: React.Dispatch<React.SetStateAction<string>>;
+    pointsEarned: string;
+    setPointsEarned: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(
@@ -33,6 +37,8 @@ type SettingsProviderProps = {
 export function SettingsProvider({
     children,
 }: SettingsProviderProps) {
+    const [totalPoints, setTotalPoints] = useState("");
+    const [pointsEarned, setPointsEarned] = useState("");
     const [defaultTotalPoints, setDefaultTotalPoints] = useState(DEFAULT_TOTAL_POINTS);
     const [settingsLoaded, setSettingsLoaded] = useState(false);
     const [gradeScale, setGradeScale] = useState<GradeScale>(DEFAULT_GRADE_SCALE);
@@ -92,9 +98,13 @@ export function SettingsProvider({
                 setRoundingMode,
                 defaultTotalPoints,
                 setDefaultTotalPoints,
-                settingsLoaded,
                 gradeScale,
                 setGradeScale,
+                totalPoints,
+                setTotalPoints,
+                pointsEarned,
+                setPointsEarned,
+                settingsLoaded,
             }}
         >
             {children}
