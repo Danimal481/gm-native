@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/themed-view";
 import { getLetterGrade, roundPercentage, type LetterGrade } from "@/constants/grading";
 import { Colors } from "@/constants/theme";
 import { useSettings } from "@/contexts/SettingsContext";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
@@ -124,11 +125,19 @@ return (
             },
           })
         }
-        hitSlop={8}
+        hitSlop={10}
+        accessibilityRole="button"
+        accessibilityLabel="Open grade chart in full screen"
+        style={({ pressed }) => [
+          styles.expandButton,
+          pressed && styles.expandButtonPressed,
+        ]}
       >
-        <ThemedText style={styles.expandButtonText}>
-          Full Screen
-        </ThemedText>
+        <MaterialIcons
+          name="open-in-full"
+          size={22}
+          color={Colors.light.tint}
+        />
       </Pressable>
     </>
   ) : (
@@ -343,9 +352,17 @@ return (
       paddingBottom: 8,
     },    
     
-    expandButtonText: {
-      color: Colors.light.tint,
-      fontWeight: "600",
+    expandButton: {
+      width: 40,
+      height: 40,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 10,
+      backgroundColor: Colors.light.background,
+    },
+
+    expandButtonPressed: {
+      opacity: 0.6,
     },
 
  });
