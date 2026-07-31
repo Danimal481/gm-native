@@ -1,28 +1,90 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "react-native";
 
-import { SettingsProvider } from '@/contexts/SettingsContext';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Colors } from "@/constants/theme";
+import {
+  SettingsProvider,
+  useSettings,
+} from "@/contexts/SettingsContext";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <SettingsProvider>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <RootNavigator />
+    </SettingsProvider>
+  );
+}
+
+function RootNavigator() {
+  const systemColorScheme = useColorScheme();
+  const { themeMode, settingsLoaded } = useSettings();
+
+  const activeThemeMode =
+    themeMode === "system"
+      ? systemColorScheme ?? "light"
+      : themeMode;
+
+  const theme = Colors[activeThemeMode];
+
+  const baseNavigationTheme =
+    activeThemeMode === "dark"
+      ? DarkTheme
+      : DefaultTheme;
+
+  const navigationTheme = {
+    ...baseNavigationTheme,
+    colors: {
+      ...baseNavigationTheme.colors,
+      primary: theme.tint,
+      background: theme.background,
+      card: theme.card,
+      text: theme.text,
+      border: theme.border,
+      notification: theme.tint,
+    },
+  };
+
+  if (!settingsLoaded) {
+    return null;
+  }
+
+  return (
+    <ThemeProvider value={navigationTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="expanded-chart" options={{ title: "Grade Chart" }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="expanded-chart"
+          options={{
+            title: "Grade Chart",
+            headerStyle: {
+              backgroundColor: theme.background,
+            },
+            headerTintColor: theme.text,
+          }}
+        />
+
+        <Stack.Screen
+          name="modal"
+          options={{
+            presentation: "modal",
+            title: "Modal",
+          }}
+        />
       </Stack>
-      <StatusBar style="auto" />
+
+      <StatusBar
+        style={activeThemeMode === "dark" ? "light" : "dark"}
+      />
     </ThemeProvider>
-  </SettingsProvider>
   );
 }
