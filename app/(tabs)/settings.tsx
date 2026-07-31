@@ -6,8 +6,9 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors, Fonts } from '@/constants/theme';
+import { Fonts } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
@@ -21,7 +22,8 @@ export default function SettingsScreen() {
     highlight?: string;
   }>();
   const highlightOpacity = useRef(new Animated.Value(0)).current;
-  
+  const { theme} = useAppTheme();
+
   useEffect(() => {
   if (highlight !== "rounding") {
     return;
@@ -58,12 +60,12 @@ export default function SettingsScreen() {
         paddingBottom: 16
       }}
       headerBackgroundColor={{
-        light: Colors.light.background,
-        dark: Colors.dark.background,
+        light: theme.background,
+        dark: theme.background,
       }}
       headerImage={
         <IconSymbol
-          color={Colors.light.tint}
+          color={theme.tint}
           size={310}
           name="gearshape.fill"
           style={styles.headerImage}
@@ -84,7 +86,7 @@ export default function SettingsScreen() {
         {
           borderColor: highlightOpacity.interpolate({
             inputRange: [0, 1],
-            outputRange: ["transparent", Colors.light.tint],
+            outputRange: ["transparent", theme.tint],
           }),
         },
       ]}
@@ -99,7 +101,7 @@ export default function SettingsScreen() {
   <ThemedView
   style={[
     styles.settingCard,
-    { backgroundColor: Colors.light.card },
+    { backgroundColor: theme.card },
   ]}
 >
     <ThemedText style={[{ fontSize: 18, fontWeight: '600', }]}>Grade Scale</ThemedText>
@@ -116,7 +118,6 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   headerImage: {
-    color: Colors.light.tint,
     bottom: -90,
     left: -35,
     position: 'absolute',
@@ -141,9 +142,5 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 2,   
   },
-
-  roundingCardHighlighted: {
-    borderColor: Colors.light.tint,
-  }
 
 });

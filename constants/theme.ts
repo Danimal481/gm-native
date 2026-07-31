@@ -1,50 +1,77 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * GradeMaster theme definitions.
+ *
+ * Brand colors define the application's identity.
+ * Theme colors define how those brand colors are applied
+ * in Light and Dark mode.
  */
 
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+/* ---------- Brand Colors ---------- */
 
-const gradeMasterNavy = '#101C2A';
-const gradeMasterGold = '#E4B64A';
-const gradeMasterText = '#F4F7FB';
+const brandNavy = "#101C2A";
+const brandGold = "#E4B64A";
+const brandBlue = "#0A7EA4";
 
-const gradeA = '#4ADE80';
-const gradeB = '#A3E635';
-const gradeC = '#FACC15';
-const gradeD = '#FB923C';
-const gradeF = '#F87171';
+/* ---------- Grade Colors ---------- */
+
+const gradeA = "#4ADE80";
+const gradeB = "#A3E635";
+const gradeC = "#FACC15";
+const gradeD = "#FB923C";
+const gradeF = "#F87171";
+
+/* ---------- Light Theme ---------- */
+
+const lightBackground = "#EEF2F7";
+const lightCard = "#FFFFFF";
+const lightText = "#182536";
+const lightBorder = "#D2DAE5";
+const lightIcon = "#536176";
+const lightTabIcon = "#7C8999";
+const lightTint = "#A97400";
+
+/* ---------- Dark Theme ---------- */
+
+const darkBackground = brandNavy;
+const darkCard = "#1E2F47";
+const darkText = "#F4F7FB";
+const darkBorder = "#3C4D66";
+const darkIcon = "#AEB9C9";
+const darkTabIcon = "#AEB9C9";
+const darkTint = brandGold;
 
 export const Colors = {
   light: {
-    highlight: tintColorLight,
-    text: gradeMasterText,
-    background: gradeMasterNavy,
-    card: '#1E2F47',
-    border: '#3C4D66',
-    tint: gradeMasterGold,
-    icon: '#AEB9C9',
-    tabIconDefault: '#AEB9C9',
-    tabIconSelected: gradeMasterGold,
-    gradeA: gradeA,
-    gradeB: gradeB,
-    gradeC: gradeC,
-    gradeD: gradeD,
-    gradeF: gradeF,
+    highlight: brandBlue,
+    text: lightText,
+    background: lightBackground,
+    card: lightCard,
+    border: lightBorder,
+    tint: lightTint,
+    icon: lightIcon,
+    tabIconDefault: lightTabIcon,
+    tabIconSelected: lightTint,
+
+    gradeA,
+    gradeB,
+    gradeC,
+    gradeD,
+    gradeF,
   },
+
   dark: {
-    highlight: tintColorLight,
-    text: gradeMasterText,
-    background: gradeMasterNavy,
-    card: '#1E2F47',
-    border: '#3C4D66',
-    tint: gradeMasterGold,
-    icon: '#AEB9C9',
-    tabIconDefault: '#AEB9C9',
-    tabIconSelected: gradeMasterGold,
+    highlight: brandBlue,
+    text: darkText,
+    background: darkBackground,
+    card: darkCard,
+    border: darkBorder,
+    tint: darkTint,
+    icon: darkIcon,
+    tabIconDefault: darkTabIcon,
+    tabIconSelected: darkTint,
+
     gradeA,
     gradeB,
     gradeC,
@@ -55,20 +82,16 @@ export const Colors = {
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+    sans: "system-ui",
+    serif: "ui-serif",
+    rounded: "ui-rounded",
+    mono: "ui-monospace",
   },
   default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+    sans: "normal",
+    serif: "serif",
+    rounded: "normal",
+    mono: "monospace",
   },
   web: {
     sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",

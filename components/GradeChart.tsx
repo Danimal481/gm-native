@@ -2,8 +2,8 @@ import { GradeBadge } from "@/components/GradeBadge";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { getLetterGrade, roundPercentage, type LetterGrade } from "@/constants/grading";
-import { Colors } from "@/constants/theme";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -31,6 +31,7 @@ export function GradeChart({
     onMoveUp,
     onMoveDown,    
  }: GradeChartProps) {
+    const { theme } = useAppTheme();
     const totalNumber = Number(totalPoints) || 0;
     const correctNumber = Number(pointsEarned) || 0;
     const { roundingMode, gradeScale } = useSettings();
@@ -105,13 +106,19 @@ return (
   <ThemedView
     style={[
       styles.chartCard,
-      expanded && styles.expandedChartCard,
+      { backgroundColor: theme.card },
+        expanded && styles.expandedChartCard,
     ]}
   >
-    <ThemedView style={styles.titleRow}>
-  {!expanded ? (
+    <ThemedView
+      style={[
+        styles.titleRow,
+          { backgroundColor: theme.card },
+      ]}
+    >
+    {!expanded ? (
     <>
-      <ThemedText type="subtitle" style={styles.chartTitle}>
+      <ThemedText type="subtitle">
         Grade Chart
       </ThemedText>
 
@@ -130,28 +137,40 @@ return (
         accessibilityLabel="Open grade chart in full screen"
         style={({ pressed }) => [
           styles.expandButton,
+          { backgroundColor: theme.background },
           pressed && styles.expandButtonPressed,
         ]}
       >
         <MaterialIcons
           name="open-in-full"
           size={22}
-          color={Colors.light.tint}
+          color={theme.tint}
         />
       </Pressable>
     </>
   ) : (
-    <ThemedView style={styles.expandedControls}>
+    <ThemedView
+      style={[
+        styles.expandedControls,
+        { backgroundColor: theme.card },
+      ]}
+    >
       <Pressable
         onPress={onMoveDown}
         disabled={correctNumber <= 0}
         hitSlop={10}
         style={[
-          styles.arrowButton,
-          correctNumber <= 0 && styles.disabledArrow,
-        ]}
+  styles.arrowButton,
+  { backgroundColor: theme.background },
+  correctNumber <= 0 && styles.disabledArrow,
+]}
       >
-        <ThemedText style={styles.arrowText}>▼</ThemedText>
+        <ThemedText
+  style={[
+    styles.arrowText,
+    { color: theme.tint },
+  ]}
+>▼</ThemedText>
       </Pressable>
 
       <ThemedText style={styles.selectedScoreText}>
@@ -163,18 +182,29 @@ return (
         disabled={correctNumber >= totalNumber}
         hitSlop={10}
         style={[
-          styles.arrowButton,
-          correctNumber >= totalNumber && styles.disabledArrow,
-        ]}
+  styles.arrowButton,
+  { backgroundColor: theme.background },
+  correctNumber <= 0 && styles.disabledArrow,
+]}
       >
-        <ThemedText style={styles.arrowText}>▲</ThemedText>
+       <ThemedText
+  style={[
+    styles.arrowText,
+    { color: theme.tint },
+  ]}
+>▲</ThemedText>
       </Pressable>
     </ThemedView>
   )}
 </ThemedView>
 
                       
-    <ThemedView style={styles.chartHeader}>
+    <ThemedView
+  style={[
+    styles.chartHeader,
+    { backgroundColor: theme.background },
+  ]}
+>
         <ThemedText style={styles.chartHeaderText}>Correct</ThemedText>
         <ThemedText style={styles.chartHeaderText}>Incorrect</ThemedText>
         <ThemedText style={styles.chartHeaderText}>Score</ThemedText>
@@ -202,8 +232,18 @@ return (
                   }}
                   style={[
                     styles.chartRow,
-                    row.earned === correctNumber && styles.highlightedRow,
-                  ]}
+                      {
+                        backgroundColor: theme.card,
+                        borderBottomColor: theme.border,
+                      },
+                      row.earned === correctNumber && [
+                        styles.highlightedRow,
+                        {
+                          backgroundColor: theme.background,
+                          borderBottomColor: theme.tint,
+                        },
+                      ],
+                    ]}
                 >
                   <ThemedText style={[
                     styles.chartCell,
@@ -248,11 +288,9 @@ return (
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 10,
-      backgroundColor: Colors.light.background,
     },
 
     arrowText: {
-      color: Colors.light.tint,
       fontSize: 22,
       fontWeight: "700",
     },
@@ -273,25 +311,18 @@ return (
         marginTop: 12,
         padding: 12,
         borderRadius: 16,
-        backgroundColor: Colors.light.card,
         overflow: 'hidden',
-    },
-    
-    chartTitle: {
-        color: Colors.light.text,        
     },
 
     chartHeader: {
         flexDirection: 'row',
         borderRadius: 8,
-        backgroundColor: Colors.light.background,
         paddingVertical: 12,
         paddingHorizontal: 12,
     },
 
     chartHeaderText: {
         flex: 1,
-        color: Colors.light.tint,
         fontWeight: '700',
         textAlign: 'center',
     },
@@ -299,22 +330,17 @@ return (
     chartRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.light.card,
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 12,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.light.card,
     },
 
     highlightedRow: {
-        backgroundColor: Colors.light.background,
-        borderBottomColor: Colors.light.tint,
         paddingHorizontal: 13,
     },
 
     highlightedCell: {
-        color: Colors.light.text,
         fontWeight: '700',    
     },
 
@@ -358,7 +384,6 @@ return (
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 10,
-      backgroundColor: Colors.light.background,
     },
 
     expandButtonPressed: {

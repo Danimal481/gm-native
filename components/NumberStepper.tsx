@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAppTheme } from "@/hooks/use-app-theme";
 
 type NumberStepperProps = {
   label: string;
@@ -18,9 +17,8 @@ export function NumberStepper({
   min = 0,
   max,
 }: NumberStepperProps) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-
+  const { theme } = useAppTheme();
+  
   function decrease() {
     onChange(Math.max(min, value - 1));
   }
@@ -31,15 +29,13 @@ export function NumberStepper({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }]}>
-      <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+    <View style={[styles.container, { backgroundColor: theme.card }]}>
+      <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
 
       <View style={styles.row}>
-        <Pressable style={[styles.button, { borderColor: colors.border }]} onPress={decrease}>
-          <Text style={[styles.buttonText, { color: colors.tint }]}>−</Text>
+        <Pressable style={[styles.button, { borderColor: theme.border }]} onPress={decrease}>
+          <Text style={[styles.buttonText, { color: theme.tint }]}>−</Text>
         </Pressable>
-
-        {/*<Text style={[styles.value, { color: colors.text }]}>{value}</Text> */}
 
         <TextInput
           value={String(value ?? '')}
@@ -60,11 +56,13 @@ export function NumberStepper({
 }}
           keyboardType="number-pad"
           selectTextOnFocus={true}
-          style={styles.valueInput}
+          style={[
+            styles.valueInput,
+            { color: theme.text },]}
         ></TextInput>
 
-        <Pressable style={[styles.button, { borderColor: colors.border }]} onPress={increase}>
-          <Text style={[styles.buttonText, { color: colors.tint }]}>+</Text>
+        <Pressable style={[styles.button, { borderColor: theme.border }]} onPress={increase}>
+          <Text style={[styles.buttonText, { color: theme.tint }]}>+</Text>
         </Pressable>
       </View>
     </View>
@@ -113,6 +111,5 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: '700',
     paddingVertical: 0,
-    color: Colors.light.text,
-},
+  },
 });

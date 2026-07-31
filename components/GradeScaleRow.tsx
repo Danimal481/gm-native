@@ -1,5 +1,4 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
@@ -18,8 +17,7 @@ export function GradeScaleRow({
   min = 0,
   max = 100,
 }: GradeScaleRowProps) {
-  const colorScheme = useColorScheme() ?? "light";
-  const colors = Colors[colorScheme];
+  const { theme } = useAppTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [inputText, setInputText] = useState(String(value));
     
@@ -63,15 +61,15 @@ export function GradeScaleRow({
 
   return (
     <View style={styles.row}>
-      <Text style={[styles.letter, { color: colors.text }]}>
+      <Text style={[styles.letter, { color: theme.text }]}>
         {letter}
       </Text>
 
       <Pressable
-        style={[styles.button, { backgroundColor: '#162338', borderColor: colors.border }]}
+        style={[styles.button, { backgroundColor: '#162338', borderColor: theme.border }]}
         onPress={decrease}
       >
-        <Text style={[styles.buttonText, { color: colors.tint }]}>
+        <Text style={[styles.buttonText, { color: theme.tint }]}>
           −
         </Text>
       </Pressable>
@@ -87,22 +85,22 @@ export function GradeScaleRow({
         style={[
             styles.valueInput,
             {
-                color: colors.text,
-                borderColor: colors.border,
+                color: theme.text,
+                borderColor: theme.border,
             },
         ]}
       />
 
       <Pressable
-        style={[styles.button, { backgroundColor: '#162338', borderColor: colors.border }]}
+        style={[styles.button, { backgroundColor: '#162338', borderColor: theme.border }]}
         onPress={increase}
       >
-        <Text style={[styles.buttonText, { color: colors.tint }]}>
+        <Text style={[styles.buttonText, { color: theme.tint }]}>
           +
         </Text>
       </Pressable>
 
-      <Text style={[styles.percent, { color: colors.icon }]}>
+      <Text style={[styles.percent, { color: theme.icon }]}>
         %
       </Text>
     </View>

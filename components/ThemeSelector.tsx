@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Colors } from "@/constants/theme";
 import type { ThemeMode } from "@/contexts/SettingsContext";
+import { useAppTheme } from "@/hooks/use-app-theme";
 import { Pressable, StyleSheet, View } from "react-native";
 
 type ThemeSelectorProps = {
@@ -24,9 +24,17 @@ export function ThemeSelector({
   value,
   onChange,
 }: ThemeSelectorProps) {
+const { theme } = useAppTheme();
+
   return (
-    <ThemedView style={styles.selectorCard}>
-      <ThemedText type="subtitle" style={styles.selectorTitle}>
+    <ThemedView style={[
+        styles.selectorCard,
+        { backgroundColor: theme.card },
+    ]}>
+      <ThemedText type="subtitle" style={[
+        styles.selectorTitle,
+        { color: theme.text },
+    ]}>
         Color Mode
       </ThemedText>
 
@@ -41,20 +49,32 @@ export function ThemeSelector({
       onPress={() => onChange(option.value)}
       style={[
         styles.optionButton,
-        isSelected && styles.selectedOption,
-        isFirstOption && styles.firstOption,
+        { backgroundColor: theme.background,
+          borderColor: isSelected ? theme.tint : "transparent",
+        },
+          isFirstOption && styles.firstOption,
       ]}
     >
       <View
         style={[
           styles.radioCircle,
-          isSelected && styles.selectedRadioCircle,
+          { borderColor: theme.text },
+          isSelected && { borderColor: theme.tint },
         ]}
       >
-        {isSelected && <View style={styles.radioDot} />}
+        {isSelected && <View style={[
+            styles.radioDot, 
+            { backgroundColor: theme.tint },
+        ]} 
+        />}
+        
       </View>
 
-      <ThemedText style={styles.optionText}>
+      <ThemedText style={[
+        styles.optionText,
+        { color: theme.text },
+        ]}
+       >
         {option.label}
       </ThemedText>
     </Pressable>
@@ -69,19 +89,16 @@ const styles = StyleSheet.create({
   selectorCard: {
     width: "100%",    
     padding: 12,
-    borderRadius: 16,
-    backgroundColor: Colors.light.card,
+    borderRadius: 16,   
     overflow: "hidden",
   },
 
   selectorTitle: {
-    color: Colors.light.text,
     padding: 12,
     paddingBottom: 8,
   },
 
-  optionText: {
-  color: Colors.light.text,
+  optionText: { 
   fontSize: 16,
 },
 
@@ -99,37 +116,26 @@ optionButton: {
   paddingVertical: 12,
   paddingHorizontal: 10,
   borderRadius: 8,
-  backgroundColor: Colors.light.background,
+  borderWidth: 1,
 },
 
 firstOption: {
   width: "100%",
   marginBottom: 4,
-},
-
-  selectedOption: {
-    borderWidth: 1,
-    borderColor: Colors.light.tint,
-  },
+},  
 
   radioCircle: {
     width: 18,
     height: 18,
     borderRadius: 9,
     borderWidth: 1,
-    borderColor: Colors.light.text,
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  selectedRadioCircle: {
-    borderColor: Colors.light.tint,
   },
 
   radioDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.light.tint,
+    borderRadius: 5,    
   },
 });
