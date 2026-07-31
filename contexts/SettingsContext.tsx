@@ -12,6 +12,8 @@ import {
     useState,
 } from "react";
 
+export type ThemeMode = "system" | "light" | "dark";
+
 type SettingsContextValue = {
     roundingMode: RoundingMode;
     setRoundingMode: (mode: RoundingMode) => void;
@@ -24,6 +26,9 @@ type SettingsContextValue = {
     setTotalPoints: React.Dispatch<React.SetStateAction<string>>;
     pointsEarned: string;
     setPointsEarned: React.Dispatch<React.SetStateAction<string>>;
+    themeMode: ThemeMode;
+    setThemeMode: (mode: ThemeMode) => void;
+
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(
@@ -37,6 +42,7 @@ type SettingsProviderProps = {
 export function SettingsProvider({
     children,
 }: SettingsProviderProps) {
+    const [themeMode, setThemeMode] = useState<ThemeMode>("system");
     const [totalPoints, setTotalPoints] = useState("");
     const [pointsEarned, setPointsEarned] = useState("");
     const [defaultTotalPoints, setDefaultTotalPoints] = useState(DEFAULT_TOTAL_POINTS);
@@ -46,6 +52,17 @@ export function SettingsProvider({
         useState<RoundingMode>("nearest");
         useEffect(() => {
             async function loadSettings() {
+                const savedThemeMode =
+                    await AsyncStorage.getItem("themeMode");
+
+                if (
+                    savedThemeMode === "system" ||
+                    savedThemeMode === "light" ||
+                    savedThemeMode === "dark"
+                ) {
+                    setThemeMode(savedThemeMode);
+                }
+
                 const savedRoundingMode =
                     await AsyncStorage.getItem("roundingMode");
                 
@@ -69,6 +86,13 @@ export function SettingsProvider({
             }
             loadSettings();                
         }, []);
+
+        useEffect(() => {
+            if (!settingsLoaded) {
+                return;
+            }
+            AsyncStorage.setItem("themeMode", themeMode);
+        }, [themeMode, settingsLoaded]);
 
         useEffect(() => {
             if (!settingsLoaded) {
@@ -105,6 +129,8 @@ export function SettingsProvider({
                 pointsEarned,
                 setPointsEarned,
                 settingsLoaded,
+                themeMode,
+                setThemeMode,
             }}
         >
             {children}

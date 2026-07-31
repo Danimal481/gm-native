@@ -4,6 +4,7 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { RoundingSelector } from '@/components/RoundingSelector';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { ThemeSelector } from '@/components/ThemeSelector';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Fonts } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
@@ -12,6 +13,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export default function SettingsScreen() {
+  const { themeMode, setThemeMode } = useSettings();
   const { roundingMode, setRoundingMode } = useSettings();
   const { defaultTotalPoints, setDefaultTotalPoints } = useSettings();
   const { gradeScale, setGradeScale } = useSettings();
@@ -91,6 +93,8 @@ export default function SettingsScreen() {
     </Animated.View>
 
     <NumberStepper label="Default Total Points" value={defaultTotalPoints} onChange={setDefaultTotalPoints} min={1} />
+
+  <ThemeSelector value={themeMode} onChange={setThemeMode} />
 
   <ThemedView
   style={[
