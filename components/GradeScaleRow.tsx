@@ -66,7 +66,7 @@ export function GradeScaleRow({
       </Text>
 
       <Pressable
-        style={[styles.button, { backgroundColor: '#162338', borderColor: theme.border }]}
+        style={[styles.button, { backgroundColor: theme.background, borderColor: theme.border }]}
         onPress={decrease}
       >
         <Text style={[styles.buttonText, { color: theme.tint }]}>
@@ -92,7 +92,7 @@ export function GradeScaleRow({
       />
 
       <Pressable
-        style={[styles.button, { backgroundColor: '#162338', borderColor: theme.border }]}
+        style={[styles.button, { backgroundColor: theme.background, borderColor: theme.border }]}
         onPress={increase}
       >
         <Text style={[styles.buttonText, { color: theme.tint }]}>

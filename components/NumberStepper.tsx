@@ -17,7 +17,7 @@ export function NumberStepper({
   min = 0,
   max,
 }: NumberStepperProps) {
-  const { theme } = useAppTheme();
+  const { theme, cardContainerStyle } = useAppTheme();
   
   function decrease() {
     onChange(Math.max(min, value - 1));
@@ -29,11 +29,18 @@ export function NumberStepper({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.card }]}>
+    <View style={[styles.container, { backgroundColor: theme.card }, cardContainerStyle]}>
       <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
 
       <View style={styles.row}>
-        <Pressable style={[styles.button, { borderColor: theme.border }]} onPress={decrease}>
+        <Pressable style={[
+          styles.button,
+          {
+            borderColor: theme.border,
+            backgroundColor: theme.background,
+          }
+          ]} 
+        onPress={decrease}>
           <Text style={[styles.buttonText, { color: theme.tint }]}>−</Text>
         </Pressable>
 
@@ -61,7 +68,14 @@ export function NumberStepper({
             { color: theme.text },]}
         ></TextInput>
 
-        <Pressable style={[styles.button, { borderColor: theme.border }]} onPress={increase}>
+        <Pressable style={[
+          styles.button, 
+            { 
+              borderColor: theme.border, 
+              backgroundColor: theme.background,
+            },
+            ]} 
+          onPress={increase}>
           <Text style={[styles.buttonText, { color: theme.tint }]}>+</Text>
         </Pressable>
       </View>
@@ -71,10 +85,11 @@ export function NumberStepper({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 16,
-    padding: 12,
-    gap: 8,
-  },
+  borderRadius: 16,
+  padding: 12,
+  gap: 8,
+},
+
   label: {
     fontSize: 18,
     fontWeight: '600',
@@ -91,7 +106,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
-    backgroundColor: '#162338',
     justifyContent: 'center',
   },
   buttonText: {

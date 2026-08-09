@@ -5,8 +5,8 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
-import { Colors } from '@/constants/theme';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -56,20 +56,21 @@ useEffect(() => {
 );
 
   const letterGrade = getLetterGrade(percentage, gradeScale);
- 
+  const { theme } = useAppTheme();
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{
-        light: Colors.light.background,
-        dark: Colors.dark.background,
-      }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/grademaster-logo.png')}
-          style={styles.logo}
-        />
-      }
-    >
+  headerBackgroundColor={{
+    light: theme.background,
+    dark: theme.background,
+  }}
+  headerImage={
+    <Image
+      source={require('@/assets/images/gm-app-trans.png')}
+      style={styles.headerImage}
+      contentFit="contain"
+    />
+  }
+>
       <ThemedView style={styles.stepContainer}>
         <NumberStepper
           label="Total Points"
@@ -106,10 +107,14 @@ useEffect(() => {
           }
           style={({ pressed }) => [
             styles.roundingPill,
+            { 
+              backgroundColor: theme.background,
+              borderColor: theme.border,
+            },
             pressed && styles.roundingPillPressed,
           ]}
         >
-          <Text style={styles.roundingPillText}>
+          <Text style={[styles.roundingPillText, { color: theme.text }]}>
             ⚙ {roundingLabels[roundingMode]} -&gt; 
           </Text>
         </Pressable>
@@ -145,11 +150,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 
-  logo: {
-    height: 228,
-    width: 360,
-    top: 95,
-    alignSelf: 'center',
+  headerImage: {
+    width: 310,
+    height: 310,
+    bottom: -90,
+    left: -35,
     position: 'absolute',
   },
 
@@ -170,7 +175,6 @@ const styles = StyleSheet.create({
   },
 
   roundingPillText: {
-    color: "#E8EDF5",
     fontSize: 14,
     fontWeight: '600',
   },

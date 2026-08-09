@@ -22,7 +22,7 @@ export default function SettingsScreen() {
     highlight?: string;
   }>();
   const highlightOpacity = useRef(new Animated.Value(0)).current;
-  const { theme} = useAppTheme();
+  const { theme, cardContainerStyle } = useAppTheme();
 
   useEffect(() => {
   if (highlight !== "rounding") {
@@ -102,6 +102,7 @@ export default function SettingsScreen() {
   style={[
     styles.settingCard,
     { backgroundColor: theme.card },
+    cardContainerStyle,
   ]}
 >
     <ThemedText style={[{ fontSize: 18, fontWeight: '600', }]}>Grade Scale</ThemedText>

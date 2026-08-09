@@ -27,11 +27,12 @@ export function RoundingSelector({
   value,
   onChange,
 }: RoundingSelectorProps) {
-const { theme } = useAppTheme();
+const { theme, cardContainerStyle } = useAppTheme();
   return (
     <ThemedView style={[
       styles.selectorCard,
       { backgroundColor: theme.card },
+      cardContainerStyle,
       ]}>
       <ThemedText type="subtitle" style={[
         styles.selectorTitle,
@@ -90,10 +91,8 @@ const { theme } = useAppTheme();
 const styles = StyleSheet.create({
   selectorCard: {
     width: "100%",
-    marginTop: 12,
     padding: 12,
     borderRadius: 16,
-    overflow: "hidden",
   },
 
   selectorTitle: {

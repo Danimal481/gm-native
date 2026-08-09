@@ -31,7 +31,7 @@ export function GradeChart({
     onMoveUp,
     onMoveDown,    
  }: GradeChartProps) {
-    const { theme } = useAppTheme();
+    const { theme, cardContainerStyle } = useAppTheme();
     const totalNumber = Number(totalPoints) || 0;
     const correctNumber = Number(pointsEarned) || 0;
     const { roundingMode, gradeScale } = useSettings();
@@ -107,6 +107,7 @@ return (
     style={[
       styles.chartCard,
       { backgroundColor: theme.card },
+      cardContainerStyle,
         expanded && styles.expandedChartCard,
     ]}
   >
@@ -184,7 +185,7 @@ return (
         style={[
   styles.arrowButton,
   { backgroundColor: theme.background },
-  correctNumber <= 0 && styles.disabledArrow,
+  correctNumber >= totalNumber && styles.disabledArrow,
 ]}
       >
        <ThemedText
@@ -311,7 +312,6 @@ return (
         marginTop: 12,
         padding: 12,
         borderRadius: 16,
-        overflow: 'hidden',
     },
 
     chartHeader: {
