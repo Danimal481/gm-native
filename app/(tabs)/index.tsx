@@ -10,7 +10,7 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions } from 'react-native';
 
 const roundingLabels: Record<RoundingMode, string> = {
   nearest: 'Rounding to Nearest',
@@ -31,6 +31,9 @@ export default function HomeScreen() {
   const [pointsEarned, setPointsEarned] = useState(defaultTotalPoints);
 
   const calculatorInitialized = useRef(false);
+  
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
 useEffect(() => {
   if (settingsLoaded && !calculatorInitialized.current) {
@@ -57,6 +60,72 @@ useEffect(() => {
 
   const letterGrade = getLetterGrade(percentage, gradeScale);
   const { theme } = useAppTheme();
+  
+  if (isLandscape) {
+    return (
+      <ThemedView style={styles.landscapeContainer}>
+        <ScrollView
+          style={styles.landscapeCalculator}
+          contentContainerStyle={styles.landscapeCalculatorContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <NumberStepper
+            label="Total Points"
+            value={Number(totalPoints)}
+            onChange={handleTotalPointsChange}
+            min={1}
+          />
+          
+          <NumberStepper
+            label="Points Earned"
+            value={Number(pointsEarned)}
+            onChange={setPointsEarned}
+            min={0}
+            max={totalPoints}
+          />
+          <ThemedView style={styles.summaryContainer}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={styles.summaryText}
+        >
+          {pointsEarned} / {totalPoints} = {percentage}%
+        </ThemedText>
+
+        <GradeBadge grade={letterGrade} />
+
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/settings",
+              params: { highlight: "rounding" },
+            })
+          }
+          style={({ pressed }) => [
+            styles.roundingPill,
+            { 
+              backgroundColor: theme.background,
+              borderColor: theme.border,
+            },
+            pressed && styles.roundingPillPressed,
+          ]}
+        >
+          <Text style={[styles.roundingPillText, { color: theme.text }]}>
+            ⚙ {roundingLabels[roundingMode]} -&gt; 
+          </Text>
+        </Pressable>
+        </ThemedView>
+      </ScrollView>
+      <ThemedView style={styles.landscapeChart}>
+        <GradeChart
+          totalPoints={Number(totalPoints)}
+          pointsEarned={Number(pointsEarned)}
+          expanded
+        />
+      </ThemedView>
+        </ThemedView>         
+    );
+  }
+  
   return (
     <ParallaxScrollView
   headerBackgroundColor={{
@@ -178,4 +247,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+
+  landscapeContainer: {
+  flex: 1,
+  flexDirection: "row",
+  padding: 12,
+  gap: 12,
+},
+
+landscapeCalculator: {
+  flex: 1,
+},
+
+landscapeCalculatorContent: {
+  flexGrow: 1,
+  justifyContent: "center",
+  gap: 12,
+  paddingBottom: 12,
+},
+
+landscapeChart: {
+  flex: 1.3,
+},
 });
