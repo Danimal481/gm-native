@@ -28,6 +28,7 @@ type SettingsContextValue = {
     setPointsEarned: React.Dispatch<React.SetStateAction<string>>;
     themeMode: ThemeMode;
     setThemeMode: (mode: ThemeMode) => void;
+    resetPreferences: () => Promise<void>;
 
 }
 
@@ -115,6 +116,21 @@ export function SettingsProvider({
                 AsyncStorage.setItem("gradeScale", JSON.stringify(gradeScale)
             );
         }, [gradeScale, settingsLoaded]);
+
+        async function resetPreferences() {
+            await AsyncStorage.multiRemove([
+                "themeMode",
+                "roundingMode",
+                "defaultTotalPoints",
+                "gradeScale"
+            ]);
+        
+        setThemeMode("system");
+        setRoundingMode("nearest");
+        setDefaultTotalPoints(DEFAULT_TOTAL_POINTS);
+        setGradeScale(DEFAULT_GRADE_SCALE);
+    }
+
     return (
         <SettingsContext.Provider
             value={{
@@ -131,6 +147,7 @@ export function SettingsProvider({
                 settingsLoaded,
                 themeMode,
                 setThemeMode,
+                resetPreferences
             }}
         >
             {children}

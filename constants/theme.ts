@@ -13,6 +13,7 @@ import { Platform } from "react-native";
 const brandNavy = "#101C2A";
 const brandGold = "#E4B64A";
 const brandBlue = "#0A7EA4";
+const danger = "#C94A4A";
 
 /* ---------- Grade Colors ---------- */
 
@@ -54,6 +55,8 @@ export const Colors = {
     tabIconDefault: lightTabIcon,
     tabIconSelected: lightTint,
 
+    danger,
+
     gradeA,
     gradeB,
     gradeC,
@@ -71,6 +74,8 @@ export const Colors = {
     icon: darkIcon,
     tabIconDefault: darkTabIcon,
     tabIconSelected: darkTint,
+
+    danger,
 
     gradeA,
     gradeB,
