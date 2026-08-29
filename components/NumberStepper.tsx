@@ -8,6 +8,7 @@ type NumberStepperProps = {
   onChange: (newValue: number) => void;
   min?: number;
   max?: number;
+  compact?: boolean;
 };
 
 export function NumberStepper({
@@ -16,6 +17,7 @@ export function NumberStepper({
   onChange,
   min = 0,
   max,
+  compact = false 
 }: NumberStepperProps) {
   const { theme, cardContainerStyle } = useAppTheme();
   
@@ -29,57 +31,98 @@ export function NumberStepper({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.card }, cardContainerStyle]}>
-      <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+    <View
+  style={[
+    styles.container,
+    compact && styles.compactContainer,
+    { backgroundColor: theme.card },
+    cardContainerStyle,
+  ]}
+>
+  <View style={compact ? styles.compactLayout : undefined}>
+    <Text
+      style={[
+        styles.label,
+        compact && styles.compactLabel,
+        { color: theme.text },
+      ]}
+    >
+      {label}
+    </Text>
 
-      <View style={styles.row}>
-        <Pressable style={[
+    <View style={[styles.row, compact && styles.compactRow]}>
+      <Pressable
+        style={[
           styles.button,
+          compact && styles.compactButton,
           {
             borderColor: theme.border,
             backgroundColor: theme.background,
-          }
-          ]} 
-        onPress={decrease}>
-          <Text style={[styles.buttonText, { color: theme.tint }]}>−</Text>
-        </Pressable>
-
-        <TextInput
-          value={String(value ?? '')}
-          onChangeText={(text) => {
-  const digitsOnly = text.replace(/\D/g, '');
-
-  if (digitsOnly === '') {
-    onChange(min);
-    return;
-  }
-
-  const nextValue = Number(digitsOnly);
-
-  const limitedValue =
-    max !== undefined ? Math.min(max, nextValue) : nextValue;
-
-  onChange(Math.max(min, limitedValue));
-}}
-          keyboardType="number-pad"
-          selectTextOnFocus={true}
+          },
+        ]}
+        onPress={decrease}
+      >
+        <Text
           style={[
-            styles.valueInput,
-            { color: theme.text },]}
-        ></TextInput>
+            styles.buttonText,
+            compact && styles.compactButtonText,
+            { color: theme.tint },
+          ]}
+        >
+          −
+        </Text>
+      </Pressable>
 
-        <Pressable style={[
-          styles.button, 
-            { 
-              borderColor: theme.border, 
-              backgroundColor: theme.background,
-            },
-            ]} 
-          onPress={increase}>
-          <Text style={[styles.buttonText, { color: theme.tint }]}>+</Text>
-        </Pressable>
-      </View>
+      <TextInput
+        value={String(value ?? '')}
+        onChangeText={(text) => {
+          const digitsOnly = text.replace(/\D/g, '');
+
+          if (digitsOnly === '') {
+            onChange(min);
+            return;
+          }
+
+          const nextValue = Number(digitsOnly);
+
+          const limitedValue =
+            max !== undefined ? Math.min(max, nextValue) : nextValue;
+
+          onChange(Math.max(min, limitedValue));
+        }}
+        keyboardType="number-pad"
+        selectTextOnFocus={true}
+        style={[
+          styles.valueInput,
+          compact && styles.compactValueInput,
+          { color: theme.text },
+        ]}
+      />
+
+      <Pressable
+        style={[
+          styles.button,
+          compact && styles.compactButton,
+          {
+            borderColor: theme.border,
+            backgroundColor: theme.background,
+          },
+        ]}
+        onPress={increase}
+      >
+        <Text
+          style={[
+            styles.buttonText,
+            compact && styles.compactButtonText,
+            { color: theme.tint },
+          ]}
+        >
+          +
+        </Text>
+      </Pressable>
     </View>
+  </View>
+</View>
   );
 }
 
@@ -126,4 +169,42 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     paddingVertical: 0,
   },
+
+  compactContainer: {
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+},
+
+compactLayout: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+
+compactLabel: {
+  fontSize: 15,
+  lineHeight: 18,
+  width: 85,
+  flexShrink: 0,
+},
+
+compactRow: {
+  flex: 1,
+  justifyContent: 'center',
+  gap: 8,
+},
+
+compactButton: {
+  width: 40,
+  height: 40,
+  borderRadius: 10,
+},
+
+compactButtonText: {
+  fontSize: 24,
+},
+
+compactValueInput: {
+  minWidth: 60,
+  fontSize: 30,
+},
 });

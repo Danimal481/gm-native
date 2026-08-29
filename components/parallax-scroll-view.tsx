@@ -10,6 +10,7 @@ import Animated, {
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HEADER_HEIGHT = 250;
 
@@ -31,22 +32,28 @@ export default function ParallaxScrollView({
   const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
+  const insets = useSafeAreaInsets();
+  const headerHeight = HEADER_HEIGHT + insets.top;
   const headerAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollOffset.value,
-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
-            [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT * 0.75]
-          ),
-        },
-        {
-          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
-        },
-      ],
-    };
-  });
+  return {
+    transform: [
+      {
+        translateY: interpolate(
+          scrollOffset.value,
+          [-headerHeight, 0, headerHeight],
+          [-headerHeight / 2, 0, headerHeight * 0.75]
+        ),
+      },
+      {
+        scale: interpolate(
+          scrollOffset.value,
+          [-headerHeight, 0, headerHeight],
+          [2, 1, 1]
+        ),
+      },
+    ],
+  };
+});
 
   return (
     <Animated.ScrollView
@@ -56,11 +63,16 @@ export default function ParallaxScrollView({
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       contentContainerStyle={contentContainerStyle}>
       <Animated.View
-        style={[
-          styles.header,
-          { backgroundColor: headerBackgroundColor[colorScheme] },
-          headerAnimatedStyle,
-        ]}>
+  style={[
+    styles.header,
+    {
+      backgroundColor: headerBackgroundColor[colorScheme],
+      height: headerHeight,
+      paddingTop: insets.top,
+    },
+    headerAnimatedStyle,
+  ]}
+>
         {headerImage}
       </Animated.View>
       <ThemedView style={styles.content}>{children}</ThemedView>
@@ -73,7 +85,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: HEADER_HEIGHT,
     overflow: 'hidden',
   },
   content: {

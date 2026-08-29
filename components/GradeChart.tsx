@@ -21,7 +21,8 @@ type GradeChartProps = {
   pointsEarned: number;
   expanded?: boolean;
   onMoveUp?: () => void;
-  onMoveDown?: () => void;  
+  onMoveDown?: () => void;
+  showNavigation?: boolean;
 };
 
 export function GradeChart({ 
@@ -29,7 +30,8 @@ export function GradeChart({
     pointsEarned,
     expanded = false,
     onMoveUp,
-    onMoveDown,    
+    onMoveDown,
+    showNavigation = true,
  }: GradeChartProps) {
     const { theme, cardContainerStyle } = useAppTheme();
     const totalNumber = Number(totalPoints) || 0;
@@ -149,13 +151,13 @@ return (
         />
       </Pressable>
     </>
-  ) : (
-    <ThemedView
-      style={[
-        styles.expandedControls,
-        { backgroundColor: theme.card },
-      ]}
-    >
+  ) : showNavigation ? (
+  <ThemedView
+    style={[
+      styles.expandedControls,
+      { backgroundColor: theme.card },
+    ]}
+  >
       <Pressable
         onPress={onMoveDown}
         disabled={correctNumber <= 0}
@@ -196,7 +198,7 @@ return (
 >▲</ThemedText>
       </Pressable>
     </ThemedView>
-  )}
+  ) : null}
 </ThemedView>
 
                       

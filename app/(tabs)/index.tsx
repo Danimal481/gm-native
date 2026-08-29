@@ -11,6 +11,7 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const roundingLabels: Record<RoundingMode, string> = {
   nearest: 'Rounding to Nearest',
@@ -26,7 +27,7 @@ export default function HomeScreen() {
         gradeScale,
         settingsLoaded,
 } = useSettings();
-   
+
   const [totalPoints, setTotalPoints] = useState(defaultTotalPoints);
   const [pointsEarned, setPointsEarned] = useState(defaultTotalPoints);
 
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  const insets = useSafeAreaInsets();
 
 useEffect(() => {
   if (settingsLoaded && !calculatorInitialized.current) {
@@ -63,25 +65,36 @@ useEffect(() => {
   
   if (isLandscape) {
     return (
-      <ThemedView style={styles.landscapeContainer}>
+      <ThemedView
+        style={[
+          styles.landscapeContainer,
+          {
+            paddingTop: Math.max(insets.top, 12),
+            paddingLeft: Math.max(insets.left, 12),
+            paddingRight: Math.max(insets.right, 12),
+          },
+        ]}
+      >
         <ScrollView
           style={styles.landscapeCalculator}
           contentContainerStyle={styles.landscapeCalculatorContent}
           showsVerticalScrollIndicator={false}
         >
           <NumberStepper
-            label="Total Points"
+            label={"Total\nPoints"}
             value={Number(totalPoints)}
             onChange={handleTotalPointsChange}
             min={1}
+            compact
           />
           
           <NumberStepper
-            label="Points Earned"
+            label={"Points\nEarned"}
             value={Number(pointsEarned)}
             onChange={setPointsEarned}
             min={0}
             max={totalPoints}
+            compact
           />
           <ThemedView style={styles.summaryContainer}>
         <ThemedText
@@ -120,6 +133,7 @@ useEffect(() => {
           totalPoints={Number(totalPoints)}
           pointsEarned={Number(pointsEarned)}
           expanded
+          showNavigation={false}
         />
       </ThemedView>
         </ThemedView>         
@@ -251,7 +265,6 @@ const styles = StyleSheet.create({
   landscapeContainer: {
   flex: 1,
   flexDirection: "row",
-  padding: 12,
   gap: 12,
 },
 
