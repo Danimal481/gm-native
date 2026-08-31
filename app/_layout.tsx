@@ -12,6 +12,8 @@ import {
   SettingsProvider,
   useSettings,
 } from "@/contexts/SettingsContext";
+import { recordAppOpen } from "@/utils/reviewPrompt";
+import { useEffect } from "react";
 
 export default function RootLayout() {
   return (
@@ -24,6 +26,14 @@ export default function RootLayout() {
 function RootNavigator() {
   const systemColorScheme = useColorScheme();
   const { themeMode, settingsLoaded } = useSettings();
+
+  useEffect(() => {
+    if (!settingsLoaded) {
+      return;
+    }
+
+    void recordAppOpen();
+  }, [settingsLoaded]);
 
   const activeThemeMode =
     themeMode === "system"

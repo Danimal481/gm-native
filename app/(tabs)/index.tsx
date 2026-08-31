@@ -7,6 +7,7 @@ import { ThemedView } from '@/components/themed-view';
 import { getLetterGrade, RoundingMode, roundPercentage } from '@/constants/grading';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { recordCalculationAndMaybeRequestReview } from "@/utils/reviewPrompt";
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -50,6 +51,11 @@ useEffect(() => {
     setPointsEarned((currentPointsEarned) => Math.min(currentPointsEarned, newTotal));
   }
 
+  function handlePointsEarnedChange(newValue: number) {
+    setPointsEarned(newValue);
+    void recordCalculationAndMaybeRequestReview();
+  }
+
   const rawPercentage =
   totalPoints > 0
     ? (pointsEarned / totalPoints ) * 100
@@ -91,7 +97,7 @@ useEffect(() => {
           <NumberStepper
             label={"Points\nEarned"}
             value={Number(pointsEarned)}
-            onChange={setPointsEarned}
+            onChange={handlePointsEarnedChange}
             min={0}
             max={totalPoints}
             compact
@@ -165,7 +171,7 @@ useEffect(() => {
         <NumberStepper
           label="Points Earned"
           value={pointsEarned}
-          onChange={setPointsEarned}
+          onChange={handlePointsEarnedChange}
           min={0}
           max={totalPoints}
         />
